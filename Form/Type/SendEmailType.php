@@ -6,11 +6,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\Util\PropertyPath;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SendEmailType extends AbstractType
 {
@@ -57,19 +55,18 @@ class SendEmailType extends AbstractType
             ->add('locale', 'choice', array(
                 'choices' => $this->locales,
                 'label' => 'Language'
-            ))
-        ;
+            ));
 
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildTemplateField'));
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildSubjectFields'));
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildBodyFields'));
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildBodyHtmlFields'));
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildEmailFields'));
-        $builder->addEventListener(FormEvents::PRE_BIND, array($this, 'buildConfirmField'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildTemplateField'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildSubjectFields'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildBodyFields'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildBodyHtmlFields'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildEmailFields'));
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'buildConfirmField'));
         
-        $builder->addEventListener(FormEvents::BIND, array($this, 'convertSubjectVarsToArray'));
-        $builder->addEventListener(FormEvents::BIND, array($this, 'convertBodyVarsToArray'));
-        $builder->addEventListener(FormEvents::BIND, array($this, 'convertBodyHtmlVarsToArray'));
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'convertSubjectVarsToArray'));
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'convertBodyVarsToArray'));
+        $builder->addEventListener(FormEvents::SUBMIT, array($this, 'convertBodyHtmlVarsToArray'));
     }
 
     /**
@@ -158,21 +155,6 @@ class SendEmailType extends AbstractType
     public function convertBodyHtmlVarsToArray(FormEvent $event)
     {
         $event->setData($event->getData(), 'bodyHtmlVars');
-    }
-
-    protected function convertTemplateVarsToArray($data, $varsPropertyName)
-    {
-        if (isset($data->$varsPropertyName) && is_array($data->$varsPropertyName)) {
-            $vars = array();
-            foreach ($data->$varsPropertyName as $rawVar => $value) {
-                $propertyPath = new PropertyPath('['.str_replace(':' , '][', $rawVar).']');
-                $propertyPath->setValue($vars, $value);
-            }
-
-            $data->$varsPropertyName = $vars;
-        }
-
-        return $data;
     }
 
     /**
@@ -284,11 +266,11 @@ class SendEmailType extends AbstractType
 
         $event->setData($data);
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Rj\EmailBundle\Form\Model\SendEmail',

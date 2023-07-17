@@ -3,7 +3,9 @@
 namespace Rj\EmailBundle\Twig;
 
 use PHPUnit\Framework\TestCase;
-use Rj\EmailBundle\Twig\ExtractVarsVisitor;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
+use Twig\NodeTraverser;
 
 /**
  * @author Arnaud Le Blanc <arnaud.lb@gmail.com>
@@ -12,13 +14,13 @@ class ExtractVarsVisitorTest extends TestCase
 {
     public function testExtractVars()
     {
-        $loader = new \Twig_Loader_Array(array());
-        $env = new \Twig_Environment($loader);
+        $loader = new ArrayLoader(array());
+        $env = new Environment($loader);
 
         $code = 'foo bar {{ test.bar.baz }} {{ foo.bar }} {{ foo2[bar] }} {{ test.bar.qux }}';
         $node = $env->parse($env->tokenize($code));
 
-        $traverser = new \Twig_NodeTraverser($env);
+        $traverser = new NodeTraverser($env);
         $visitor = new ExtractVarsVisitor;
         $traverser->addVisitor($visitor);
 
@@ -40,4 +42,3 @@ class ExtractVarsVisitorTest extends TestCase
         ), $visitor->getExtractedVars());
     }
 }
-

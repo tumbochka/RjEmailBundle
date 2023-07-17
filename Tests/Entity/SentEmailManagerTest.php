@@ -1,45 +1,39 @@
 <?php
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Rj\EmailBundle\Entity\SentEmail;
 use Rj\EmailBundle\Entity\SentEmailManager;
 use Rj\EmailBundle\Swift\Message;
 use PHPUnit\Framework\TestCase;
+use Twig\Environment;
 
 class SentEmailManagerTest extends TestCase
 {
-
     protected $em;
     protected $repository;
     protected $twig;
 
     public function setUp(): void
     {
-        if (!class_exists('Doctrine\\ORM\\EntityManager')) {
-            $this->markTestSkipped('Doctrine ORM not installed');
-        }
-
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->twig = $this->getMockBuilder('\Twig_Environment')
-            ->getMock();
+        $this->em = $this->createMock(EntityManager::class);
+        $this->repository = $this->createMock(EntityRepository::class);
+        $this->twig = $this->createMock(Environment::class);
 
         $this->em->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($this->repository));
+            ->willReturn($this->repository);
     }
 
     public function testFindSentEmailByUniqueId()
     {
-        $sentEmail = $this->getMock('Rj\Entity\SentEmail');
+        $sentEmail = $this->createMock(SentEmail::class);
         $criteria = array('uniqueId' => 'uniqueid');
 
         $this->repository->expects($this->once())
             ->method('findOneBy')
             ->with($criteria)
-            ->will($this->returnValue($sentEmail));
+            ->willReturn($sentEmail);
 
         $manager = new SentEmailManager($this->em, $this->repository);
         $return = $manager->findSentEmailByUniqueId('uniqueid');

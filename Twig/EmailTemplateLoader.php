@@ -4,6 +4,7 @@ namespace Rj\EmailBundle\Twig;
 
 use Rj\EmailBundle\Entity\EmailTemplate;
 use Rj\EmailBundle\Entity\EmailTemplateManager;
+use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
 
@@ -27,7 +28,7 @@ class EmailTemplateLoader implements LoaderInterface
             $this->template = $this->getTemplate($name);
 
             return true;
-        } catch (\Twig_Error_Loader $e) {
+        } catch (LoaderError $e) {
             return false;
         }
     }
@@ -42,9 +43,9 @@ class EmailTemplateLoader implements LoaderInterface
      *
      * @param string $name The name of the template to load
      *
-     * @return string The template source code
+     * @return Source The template source code
      *
-     * @throws Twig_Error_Loader When $name is not found
+     * @throws LoaderError When $name is not found
      */
     public function getSourceContext($name)
     {
@@ -60,7 +61,7 @@ class EmailTemplateLoader implements LoaderInterface
      *
      * @return string The cache key
      *
-     * @throws Twig_Error_Loader When $name is not found
+     * @throws LoaderError When $name is not found
      */
     public function getCacheKey($fullName)
     {
@@ -79,11 +80,11 @@ class EmailTemplateLoader implements LoaderInterface
      * Returns true if the template is still fresh.
      *
      * @param string    $name The template name
-     * @param timestamp $time The last modification time of the cached template
+     * @param int $time The last modification time of the cached template
      *
      * @return Boolean true if the template is fresh, false otherwise
      *
-     * @throws Twig_Error_Loader When $name is not found
+     * @throws LoaderError When $name is not found
      */
     public function isFresh($name, $time)
     {
@@ -102,7 +103,7 @@ class EmailTemplateLoader implements LoaderInterface
     private function parse($name)
     {
         if (!preg_match('#^email_template:([^:]+):([^:]+):([^:]+)$#', $name, $m)) {
-            throw new \Twig_Error_Loader('invalid template name');
+            throw new LoaderError('invalid template name');
         }
 
         return array($m[1], $m[2], $m[3]);
@@ -111,7 +112,7 @@ class EmailTemplateLoader implements LoaderInterface
     private function getTemplate($name)
     {
         if (!$template = $this->manager->getTemplate($name)) {
-            throw new \Twig_Error_Loader(sprintf("Unable to find email template %s", $name));
+            throw new LoaderError(sprintf("Unable to find email template %s", $name));
         }
 
         return $template;
@@ -137,7 +138,7 @@ class EmailTemplateLoader implements LoaderInterface
             case 'bodyHtml':
                 return $translation->getBodyHtml();
             default:
-                throw new \Twig_Error_Loader(sprintf("Invalid template part %s", $part));
+                throw new LoaderError(sprintf("Invalid template part %s", $part));
         }
     }
 }

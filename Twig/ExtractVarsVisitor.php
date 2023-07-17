@@ -2,10 +2,17 @@
 
 namespace Rj\EmailBundle\Twig;
 
+use Twig\Environment;
+use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\GetAttrExpression;
+use Twig\Node\Expression\NameExpression;
+use Twig\Node\Node;
+use Twig\NodeVisitor\NodeVisitorInterface;
+
 /**
  * @author Arnaud Le Blanc <arnaud.lb@gmail.com>
  */
-class ExtractVarsVisitor implements \Twig_NodeVisitorInterface
+class ExtractVarsVisitor implements NodeVisitorInterface
 {
     private $stack;
     private $vars;
@@ -18,31 +25,31 @@ class ExtractVarsVisitor implements \Twig_NodeVisitorInterface
         $this->currentVar = &$this->vars;
     }
 
-    public function enterNode(\Twig_NodeInterface $node, \Twig_Environment $env)
+    public function enterNode(Node $node, Environment $env)
     {
         $this->stack[] = $node;
         return $node;
     }
 
-    public function leaveNode(\Twig_NodeInterface $node, \Twig_Environment $env)
+    public function leaveNode(Node $node, Environment $env)
     {
         array_pop($this->stack);
 
-        if ($node instanceof \Twig_Node_Expression_GetAttr) {
+        if ($node instanceof GetAttrExpression) {
 
             $nameNode = $node->getNode('node');
-            if ($nameNode instanceof \Twig_Node_Expression_Name) {
+            if ($nameNode instanceof NameExpression) {
                 $this->addVar($nameNode->getAttribute('name'));
             }
 
             $attributeNode = $node->getNode('attribute');
-            if ($attributeNode instanceof \Twig_Node_Expression_Constant) {
+            if ($attributeNode instanceof ConstantExpression) {
                 $this->addVar($attributeNode->getAttribute('value'));
             } else {
                 $this->addVar('...');
             }
 
-            if (!(end($this->stack) instanceof \Twig_Node_Expression_GetAttr)) {
+            if (!(end($this->stack) instanceof GetAttrExpression)) {
                 $this->resetVars();
             }
         }

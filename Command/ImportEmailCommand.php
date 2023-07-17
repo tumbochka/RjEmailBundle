@@ -2,29 +2,18 @@
 
 namespace Rj\EmailBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use FOS\UserBundle\Model\User;
 use Rj\EmailBundle\Entity\EmailTemplate;
 
 /**
  * @author Jeremy Marc <jeremy.marc@me.com>
  */
-class ImportEmailCommand extends ContainerAwareCommand
+#[AsCommand(name: 'rj:email:import-fosuserbundle', description: 'Import FOSUserbundle emails into EmailTemplate')]
+class ImportEmailCommand extends Command
 {
-    /**
-     * @see Command
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('rj:email:import-fosuserbundle')
-            ->setDescription('Import FOSUserbundle emails into EmailTemplate')
-            ;
-    }
-
     /**
      * @see Command
      */
@@ -48,8 +37,7 @@ class ImportEmailCommand extends ContainerAwareCommand
 
                 $template->translate($lang)
                     ->setSubject($subject)
-                    ->setBody($body)
-                    ;
+                    ->setBody($body);
             }
 
             $em->persist($template);

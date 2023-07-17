@@ -3,16 +3,13 @@
 namespace Rj\EmailBundle\Entity;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Rj\EmailBundle\Swift\Message;
-use Rj\EmailBundle\Entity\SentEmail;
 
 class SentEmailManager
 {
     protected $em;
     protected $repository;
     protected $class;
-    protected $uniqueIdManager;
 
     public function __construct(EntityManager $em, $class)
     {
@@ -41,10 +38,5 @@ class SentEmailManager
         if ($andFlush) {
             $this->em->flush();
         }
-    }
-
-    public function detachSentEmail(SentEmail $sentEmail)
-    {
-        $this->em->detach($sentEmail);
     }
 }

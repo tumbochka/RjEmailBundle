@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Rj\EmailBundle\Swift\Events\SendListener\MessageSendListener;
 use Rj\EmailBundle\Entity\SentEmailManager;
 use Rj\EmailBundle\Swift\Message;
@@ -14,16 +16,8 @@ class MessageSendListenerTest extends TestCase
 
     public function setUp(): void
     {
-        if (!class_exists('Doctrine\\ORM\\EntityManager')) {
-            $this->markTestSkipped('Doctrine ORM not installed');
-        }
-
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->em = $this->createMock(EntityManager::class);
+        $this->repository = $this->createMock(EntityRepository::class);
 
         $this->manager = new SentEmailManager($this->em, $this->repository);
     }
@@ -39,47 +33,28 @@ class MessageSendListenerTest extends TestCase
             ->setTo(array('jeremy@test.com' => 'Jeremy'))
             ->setSubject('subject')
             ->setBody('body')
-            ->generateId()
-            ;
+            ->generateId();
 
-        $transport = $this->_createTransport();
-        $evt = $this->_createSendEvent($transport);
+        $evt = $this->_createSendEvent();
         $evt->expects($this->any())
             ->method('getMessage')
-            ->will($this->returnValue($message))
-            ;
+            ->willReturn($message);
 
         //test the manager is called only once
-        $manager = $this->getMockBuilder('Rj\EmailBundle\Entity\SentEmailManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $manager = $this->createMock(SentEmailManager::class);
 
         $sentMessage = SentEmail::fromMessage($message);
         $manager->expects($this->once())
             ->method('createSentEmail')
-            ->will($this->returnValue($sentMessage))
-            ;
+            ->willReturn($sentMessage);
 
         $plugin = new MessageSendListener($manager);
         $plugin->sendPerformed($evt);
         $plugin->sendPerformed($evt);
     }
 
-    private function _createTransport()
+    private function _createSendEvent()
     {
-        return $this->getMock('\Swift_Transport');
+        return $this->createMock(\Swift_Events_SendEvent::class);
     }
-
-    private function _createSendEvent($transport)
-    {
-        return $this->getMockBuilder('\Swift_Events_SendEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    private function _createSleeper()
-    {
-        return $this->getMock('\Swift_Plugins_Sleeper');
-    }
-
 }

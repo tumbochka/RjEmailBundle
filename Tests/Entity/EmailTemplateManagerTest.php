@@ -2,9 +2,12 @@
 
 namespace Rj\EmailBundle\Tests\Entity;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Rj\EmailBundle\Entity\EmailTemplate;
 use Rj\EmailBundle\Entity\EmailTemplateManager;
+use Twig\Environment;
 
 class EmailTemplateManagerTest extends TestCase
 {
@@ -14,33 +17,24 @@ class EmailTemplateManagerTest extends TestCase
 
     public function setUp(): void
     {
-        if (!class_exists('Doctrine\\ORM\\EntityManager')) {
-            $this->markTestSkipped('Doctrine ORM not installed');
-        }
-
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->twig = $this->getMockBuilder('\Twig_Environment')
-            ->getMock();
+        $this->em = $this->createMock(EntityManager::class);
+        $this->repository = $this->getMockBuilder(EntityRepository::class);
+        $this->twig = $this->createMock(Environment::class);
 
         $this->em->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValue($this->repository));
+            ->willReturn($this->repository);
     }
 
     public function testFindTemplateByName()
     {
-        $emailTemplate = $this->getMock('FOS\EmailBundle\Entity\EmailTemplate');
+        $emailTemplate = $this->createMock(EmailTemplate::class);
 
         $criteria = array('name' => 'test');
         $this->repository->expects($this->once())
                 ->method('findOneBy')
                 ->with($criteria)
-                ->will($this->returnValue($emailTemplate));
+                ->willReturn($emailTemplate);
 
         $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
         $result = $manager->findTemplateByName('test');
@@ -65,13 +59,13 @@ class EmailTemplateManagerTest extends TestCase
 
     public function testGetTemplate()
     {
-        $emailTemplate = $this->getMock('FOS\EmailBundle\Entity\EmailTemplate');
+        $emailTemplate = $this->createMock('FOS\EmailBundle\Entity\EmailTemplate');
 
         $criteria = array('name' => 'template_name');
         $this->repository->expects($this->once())
             ->method('findOneBy')
             ->with($criteria)
-            ->will($this->returnValue($emailTemplate));
+            ->willReturn($emailTemplate);
 
         $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
         $result = $manager->getTemplate('template_name');

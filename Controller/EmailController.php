@@ -2,17 +2,11 @@
 
 namespace Rj\EmailBundle\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Rj\EmailBundle\Entity\EmailTemplate;
-use Rj\EmailBundle\Swift\Message;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class EmailController extends Controller
+class EmailController extends AbstractController
 {
     /**
      * View an sent email online

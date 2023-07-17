@@ -19,7 +19,7 @@ class MessageSendListener implements \Swift_Events_SendListener
     /**
      * Invoked immediately before the Message is sent.
      *
-     * @param Swift_Events_SendEvent $evt
+     * @param \Swift_Events_SendEvent $evt
      */
     public function beforeSendPerformed(\Swift_Events_SendEvent $evt)
     {
@@ -28,7 +28,7 @@ class MessageSendListener implements \Swift_Events_SendListener
     /**
      * Invoked immediately after the Message is sent.
      *
-     * @param Swift_Events_SendEvent $evt
+     * @param \Swift_Events_SendEvent $evt
      */
     public function sendPerformed(\Swift_Events_SendEvent $evt)
     {
@@ -51,6 +51,5 @@ class MessageSendListener implements \Swift_Events_SendListener
 
         $sentEmail = $this->manager->createSentEmail($message);
         $this->manager->updateSentEmail($sentEmail);
-        $this->manager->detachSentEmail($sentEmail);
     }
 }
