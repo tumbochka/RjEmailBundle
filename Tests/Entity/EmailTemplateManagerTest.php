@@ -4,6 +4,7 @@ namespace Rj\EmailBundle\Tests\Entity;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Rj\EmailBundle\Entity\EmailTemplate;
 use Rj\EmailBundle\Entity\EmailTemplateManager;
@@ -18,7 +19,7 @@ class EmailTemplateManagerTest extends TestCase
     public function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->repository = $this->getMockBuilder(EntityRepository::class);
+        $this->repository = $this->createMock(EntityRepository::class);
         $this->twig = $this->createMock(Environment::class);
 
         $this->em->expects($this->any())

@@ -4,28 +4,25 @@ namespace Rj\EmailBundle\Entity;
 
 class EmailTemplateTranslationProxyProxy implements \ArrayAccess
 {
-    private $emailTemplate;
-
-    public function __construct(EmailTemplate $emailTemplate)
-    {
-        $this->emailTemplate = $emailTemplate;
-    }
-
-    public function offsetGet($locale)
-    {
-        return $this->emailTemplate->translate($locale);
-    }
-
-    public function offsetSet($locale, $value)
+    public function __construct(private EmailTemplate $emailTemplate)
     {
     }
 
-    public function offsetExists($locale)
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->emailTemplate->translate($offset);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+    }
+
+    public function offsetExists(mixed $offset): bool
     {
         return true;
     }
 
-    public function offsetUnset($locale)
+    public function offsetUnset(mixed $offset): void
     {
     }
 }
