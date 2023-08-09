@@ -11,7 +11,7 @@ class Configuration implements ConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('rj_email');
         $rootNode = $treeBuilder->getRootNode();
@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addEmailsSection(ArrayNodeDefinition $node)
+    private function addEmailsSection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
