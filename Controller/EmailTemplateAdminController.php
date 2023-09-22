@@ -3,9 +3,11 @@
 namespace Rj\EmailBundle\Controller;
 
 use Sonata\AdminBundle\Controller\CRUDController;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 use FOS\RestBundle\Controller\Annotations\View;
 use Rj\EmailBundle\Entity\EmailTemplate;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 
 class EmailTemplateAdminController extends CRUDController
 {
@@ -84,19 +86,18 @@ class EmailTemplateAdminController extends CRUDController
     {
         $manager = $this->get('rj_email.email_template_manager');
 
-        $message = new Message;
+        $message = new Message();
 
         $ret = $manager->renderFromEmailTemplate($template, $language, $vars, $message);
 
         $message
-            ->setFrom($ret['fromEmail'], $ret['fromName'])
-            ->setTo($to)
-            ->setSubject($ret['subject'])
-            ->setBody($ret['body'], 'text/plain', 'utf-8')
-        ;
+            ->from($ret['fromEmail'], $ret['fromName'])
+            ->to($to)
+            ->subject($ret['subject'])
+            ->addPart(new DataPart($ret['body'], null, 'text/plain', 'utf-8'));
 
         if (isset($ret['bodyHtml']) && strlen($ret['bodyHtml']) > 0) {
-            $message->addPart($ret['bodyHtml'], 'text/html');
+            $message->addPart(new DataPart($ret['bodyHtml'], null, 'text/html');
         }
 
         $this->get('mailer')->send($message);

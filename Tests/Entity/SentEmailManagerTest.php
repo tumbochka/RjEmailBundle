@@ -4,7 +4,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Rj\EmailBundle\Entity\SentEmail;
 use Rj\EmailBundle\Entity\SentEmailManager;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 use PHPUnit\Framework\TestCase;
 use Twig\Environment;
 

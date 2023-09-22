@@ -113,6 +113,6 @@ It will returns an array containing the body and subject according to the curren
 If you want to get a \Swift_Message you can do :
 ```php
 $manager = $this->get('rj_email.email_template_manager');
-\Rj\EmailBundle\Swift\Message::fromArray($manager->renderEmail($templateName));
+\Rj\EmailBundle\Email\Message::fromArray($manager->renderEmail($templateName));
 ```
 You can send the message as you used to do with Swift.

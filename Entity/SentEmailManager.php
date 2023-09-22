@@ -3,7 +3,7 @@
 namespace Rj\EmailBundle\Entity;
 
 use Doctrine\ORM\EntityManager;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 
 class SentEmailManager
 {

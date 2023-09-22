@@ -2,11 +2,12 @@
 
 namespace Rj\EmailBundle\Mailer;
 
+use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Routing\RouterInterface;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Mailer\MailerInterface;
 use Rj\EmailBundle\Entity\EmailTemplateManager;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 
 /**
  * @author Jeremy Marc <jeremy.marc@me.com>
@@ -61,18 +62,18 @@ class TwigSwiftMailer implements MailerInterface
         }
 
         $message
-            ->setSubject($renderedTemplate['subject'])
-            ->setFrom($fromEmail)
-            ->setTo($toEmail)
+            ->subject($renderedTemplate['subject'])
+            ->from($fromEmail)
+            ->to($toEmail)
         ;
 
         if (array_key_exists('body', $renderedTemplate)) {
-            $message->setBody($renderedTemplate['body'], 'text/plain');
+            $message->addPart(new DataPart($renderedTemplate['body'], null, 'text/plain'));
             if (array_key_exists('bodyHtml', $renderedTemplate)) {
-                $message->addPart($renderedTemplate['bodyHtml'], 'text/html');
+                $message->addPart(new DataPart($renderedTemplate['bodyHtml'], null, 'text/html'));
             }
         } else if (array_key_exists('bodyHtml', $renderedTemplate)) {
-            $message->setBody($renderedTemplate['bodyHtml'], 'text/html');
+            $message->addPart(new DataPart($renderedTemplate['bodyHtml'], null, 'text/html'));
         }
 
         $this->mailer->send($message);

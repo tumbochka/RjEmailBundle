@@ -5,7 +5,7 @@ namespace Rj\EmailBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Timestampable;
 use FOS\OAuthServerBundle\Util\Random;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 
 /**
  * Rj\MailBundle\Entity\SentEmail

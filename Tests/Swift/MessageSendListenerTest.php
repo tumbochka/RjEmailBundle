@@ -2,9 +2,9 @@
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Rj\EmailBundle\Swift\Events\SendListener\MessageSendListener;
+use Rj\EmailBundle\Email\Events\SendListener\MessageSendListener;
 use Rj\EmailBundle\Entity\SentEmailManager;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 use Rj\EmailBundle\Entity\SentEmail;
 use PHPUnit\Framework\TestCase;
 

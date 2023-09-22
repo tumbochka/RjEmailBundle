@@ -5,7 +5,7 @@ namespace Rj\EmailBundle\Entity;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Rj\EmailBundle\Entity\EmailTemplate;
-use Rj\EmailBundle\Swift\Message;
+use Rj\EmailBundle\Email\Message;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
