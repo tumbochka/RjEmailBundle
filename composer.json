@@ -19,7 +19,6 @@
     "require": {
         "php": "^8.0",
         "symfony/framework-bundle": "^6.0",
-        "swiftmailer/swiftmailer": "*",
         "stof/doctrine-extensions-bundle": "*",
         "a2lix/translation-form-bundle" : "*",
         "twig/twig": "^2.0"
