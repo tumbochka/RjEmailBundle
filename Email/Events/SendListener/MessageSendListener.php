@@ -5,7 +5,7 @@ namespace Rj\EmailBundle\Email\Events\SendListener;
 use Rj\EmailBundle\Entity\SentEmailManager;
 use Rj\EmailBundle\Email\Message;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Mailer\Event\MessageEvent;
+use Symfony\Component\Mailer\Event\SentMessageEvent;
 
 class MessageSendListener implements EventSubscriberInterface
 {
@@ -47,7 +47,7 @@ class MessageSendListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            MessageEvent::class => 'onMessage'
+            SentMessageEvent::class => 'onMessage'
         ];
     }
 }
