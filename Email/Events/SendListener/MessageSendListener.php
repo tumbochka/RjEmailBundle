@@ -43,4 +43,11 @@ class MessageSendListener implements EventSubscriberInterface
         $sentEmail = $this->manager->createSentEmail($message);
         $this->manager->updateSentEmail($sentEmail);
     }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            MessageEvent::class => 'onMessage'
+        ];
+    }
 }
