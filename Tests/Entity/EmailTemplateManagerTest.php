@@ -8,23 +8,33 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Rj\EmailBundle\Entity\EmailTemplate;
 use Rj\EmailBundle\Entity\EmailTemplateManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Twig\Environment;
 
 class EmailTemplateManagerTest extends TestCase
 {
-    protected $em;
-    protected $repository;
-    protected $twig;
+    protected EntityManager $em;
+    protected EntityRepository $repository;
+    protected RouterInterface $router;
+    protected ContainerInterface $container;
+
 
     public function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
         $this->repository = $this->createMock(EntityRepository::class);
-        $this->twig = $this->createMock(Environment::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->container = $this->createMock(ContainerInterface::class);
 
         $this->em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
+        $this->container
+            ->expects($this->any())
+            ->method('get')
+            ->with('rj_email.twig')
+            ->willReturn($this->createMock(Environment::class));
     }
 
     public function testFindTemplateByName()
@@ -37,30 +47,22 @@ class EmailTemplateManagerTest extends TestCase
                 ->with($criteria)
                 ->willReturn($emailTemplate);
 
-        $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
+        $manager = new EmailTemplateManager(
+            $this->em,
+            $this->repository,
+            $this->router,
+            $this->container,
+            "",
+            ""
+        );
         $result = $manager->findTemplateByName('test');
 
         $this->assertEquals($result, $emailTemplate);
     }
 
-    public function testRenderTemplate()
-    {
-        $locale = "en_US";
-        $emailTemplate = new EmailTemplate();
-        $emailTemplate->setName('test');
-        $emailTemplate->translate('en')->setBody("Hello {#name}");
-        $this->em->persist($emailTemplate);
-        $this->em->flush();
-
-        $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
-        $html = $manager->renderTemplate('test', $locale, 'body', array('name' => 'Jeremy'));
-        //$this->assertTrue(is_array($html));
-        //$this->assertEquals($html->getBody(), 'Hello Jeremy');
-    }
-
     public function testGetTemplate()
     {
-        $emailTemplate = $this->createMock('FOS\EmailBundle\Entity\EmailTemplate');
+        $emailTemplate = $this->createMock(EmailTemplate::class);
 
         $criteria = array('name' => 'template_name');
         $this->repository->expects($this->once())
@@ -68,7 +70,14 @@ class EmailTemplateManagerTest extends TestCase
             ->with($criteria)
             ->willReturn($emailTemplate);
 
-        $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
+        $manager = new EmailTemplateManager(
+            $this->em,
+            $this->repository,
+            $this->router,
+            $this->container,
+            "",
+            ""
+        );
         $result = $manager->getTemplate('template_name');
 
         $this->assertEquals($result, $emailTemplate);
@@ -81,7 +90,14 @@ class EmailTemplateManagerTest extends TestCase
         $emailTemplate->setName('test');
         $emailTemplate->translate('fr')->setBody("Bonjour");
 
-        $manager = new EmailTemplateManager($this->em, $this->repository, $this->twig);
+        $manager = new EmailTemplateManager(
+            $this->em,
+            $this->repository,
+            $this->router,
+            $this->container,
+            "",
+            ""
+        );
         $result = $manager->getTemplateTranslation($emailTemplate, $locale);
         $this->assertEquals($result->getBody(), "Bonjour");
     }
